@@ -38,9 +38,7 @@ public class MainActivity extends WearableActivity implements MessageClient.OnMe
                 capabilityInfo -> {
                     updateTranscriptionCapability(capabilityInfo);
                 };
-        Wearable.getCapabilityClient(this).addListener(
-                capabilityListener,
-                SET_MESSAGE_CAPABILITY);
+        Wearable.getCapabilityClient(this).addListener(capabilityListener, SET_MESSAGE_CAPABILITY);
     }
 
     private void updateTranscriptionCapability(CapabilityInfo capabilityInfo) {

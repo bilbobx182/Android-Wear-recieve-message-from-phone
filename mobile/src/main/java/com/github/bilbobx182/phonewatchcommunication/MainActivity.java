@@ -3,6 +3,7 @@ package com.github.bilbobx182.phonewatchcommunication;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -92,13 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 if (transcriptionNodeId != null) {
                     final Task<Integer> sendTask = Wearable.getMessageClient(getBaseContext()).sendMessage(transcriptionNodeId, SET_MESSAGE_PATH, finalMessage);
 
-                    try {
-                        Tasks.await(sendTask);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    sendTask.addOnSuccessListener(dataItem -> Log.d("MESSAGESTATE", "SUCCESS"));
+                    sendTask.addOnFailureListener(dataItem -> Log.d("MESSAGESTATE", "FAILURE"));
+                    sendTask.addOnCompleteListener(task -> Log.d("MESSAGESTATE", "COMPLETE"));
                 }
             }
         });
