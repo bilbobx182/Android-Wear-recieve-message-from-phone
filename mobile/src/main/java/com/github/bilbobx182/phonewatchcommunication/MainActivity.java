@@ -19,8 +19,8 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SET_MESSAGE_CAPABILITY = "setMessage";
-    public static final String SET_MESSAGE_PATH = "/setMessage";
+    private static final String SET_MESSAGE_CAPABILITY = "setString";
+    public static final String SET_MESSAGE_PATH = "/setString";
     private static String transcriptionNodeId;
     GoogleApiClient mApiClient;
     Button enter;

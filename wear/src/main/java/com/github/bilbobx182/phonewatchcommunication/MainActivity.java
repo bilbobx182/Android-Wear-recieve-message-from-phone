@@ -20,8 +20,8 @@ import java.util.Set;
 
 public class MainActivity extends WearableActivity implements MessageClient.OnMessageReceivedListener {
 
-    private static final String SET_MESSAGE_CAPABILITY = "setMessage";
-    public static final String SET_MESSAGE_PATH = "/setMessage";
+    private static final String SET_MESSAGE_CAPABILITY = "setString";
+    public static final String SET_MESSAGE_PATH = "/setString";
     private static String transcriptionNodeId;
 
     @Override
@@ -45,7 +45,6 @@ public class MainActivity extends WearableActivity implements MessageClient.OnMe
 
     private void updateTranscriptionCapability(CapabilityInfo capabilityInfo) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
-
         transcriptionNodeId = pickBestNodeId(connectedNodes);
     }
 
