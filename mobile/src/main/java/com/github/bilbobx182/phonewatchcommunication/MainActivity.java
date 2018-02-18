@@ -43,13 +43,21 @@ public class MainActivity extends AppCompatActivity {
     private void beginSendMessageToWear() {
 
         AsyncTask.execute(() -> {
+
+                /*
+                    REFERENCE: Android Doccumentation
+                    URL: https://developer.android.com/training/wearables/data-layer/events.html#Listen
+                    LAST ACCESSED: 18/02/2018
+                */
             CapabilityInfo capabilityInfo;
             try {
+
                 capabilityInfo = Tasks.await(
                         Wearable.getCapabilityClient(getBaseContext()).getCapability(SET_MESSAGE_CAPABILITY, CapabilityClient.FILTER_REACHABLE));
                 updateTranscriptionCapability(capabilityInfo);
-
                 requestTranscription(MESSAGE_TO_SEND.getBytes());
+                
+                // END REFERENCE
 
             } catch (ExecutionException e) {
                 e.printStackTrace();
@@ -59,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    /*
+    REFERENCE: Android Doccumentation
+    URL: https://developer.android.com/training/wearables/data-layer/events.html#Listen
+    LAST ACCESSED: 18/02/2018
+     */
 
     private void updateTranscriptionCapability(CapabilityInfo capabilityInfo) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
@@ -75,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return bestNodeId;
     }
+    // End reference.
 
     private void requestTranscription(final byte[] message) {
 
