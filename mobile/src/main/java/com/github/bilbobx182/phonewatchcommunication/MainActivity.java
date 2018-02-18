@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                         Wearable.getCapabilityClient(getBaseContext()).getCapability(SET_MESSAGE_CAPABILITY, CapabilityClient.FILTER_REACHABLE));
                 updateTranscriptionCapability(capabilityInfo);
                 requestTranscription(MESSAGE_TO_SEND.getBytes());
-                
+
                 // END REFERENCE
 
             } catch (ExecutionException e) {
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     /*
     REFERENCE: Android Doccumentation
-    URL: https://developer.android.com/training/wearables/data-layer/events.html#Listen
+    URL: https://developer.android.com/training/wearables/data-layer/messages.html
     LAST ACCESSED: 18/02/2018
      */
 
