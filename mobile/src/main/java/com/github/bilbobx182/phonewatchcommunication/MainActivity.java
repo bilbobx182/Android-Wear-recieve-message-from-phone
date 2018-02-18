@@ -4,10 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.gms.wearable.CapabilityClient;
@@ -22,59 +20,53 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String SET_MESSAGE_CAPABILITY = "setString";
     public static final String SET_MESSAGE_PATH = "/setString";
+    private static final String MESSAGE_TO_SEND = "Hello Bilbobx182 Made this";
+
     private static String transcriptionNodeId;
-    GoogleApiClient mApiClient;
     Button enter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupVoiceTranscription();
+        beginSendMessageToWear();
         enter = findViewById(R.id.sendButton);
-        enter.setOnClickListener(new View.OnClickListener() {
+        enter.setOnClickListener(v ->
 
-            public void onClick(View v) {
-                setupVoiceTranscription();
-            }
-        });
+                // Note I had this here for testing purposes. It can be removed.
+                beginSendMessageToWear()
+        );
 
     }
 
-    private void setupVoiceTranscription() {
+    private void beginSendMessageToWear() {
 
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                CapabilityInfo capabilityInfo;
-                try {
-                    capabilityInfo = Tasks.await(
-                            Wearable.getCapabilityClient(getBaseContext()).getCapability(
-                                    SET_MESSAGE_CAPABILITY, CapabilityClient.FILTER_REACHABLE));
-                    // capabilityInfo has the reachable nodes with the transcription capability
-                    updateTranscriptionCapability(capabilityInfo);
-                    requestTranscription("hello".getBytes());
+        AsyncTask.execute(() -> {
+            CapabilityInfo capabilityInfo;
+            try {
+                capabilityInfo = Tasks.await(
+                        Wearable.getCapabilityClient(getBaseContext()).getCapability(SET_MESSAGE_CAPABILITY, CapabilityClient.FILTER_REACHABLE));
+                updateTranscriptionCapability(capabilityInfo);
 
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                requestTranscription(MESSAGE_TO_SEND.getBytes());
+
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
-
 
     }
 
     private void updateTranscriptionCapability(CapabilityInfo capabilityInfo) {
         Set<Node> connectedNodes = capabilityInfo.getNodes();
-
         transcriptionNodeId = pickBestNodeId(connectedNodes);
     }
 
     private String pickBestNodeId(Set<Node> nodes) {
         String bestNodeId = null;
-        // Find a nearby node or pick one arbitrarily
         for (Node node : nodes) {
             if (node.isNearby()) {
                 return node.getId();
@@ -86,24 +78,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestTranscription(final byte[] message) {
 
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                final byte[] finalMessage = message;
-                if (transcriptionNodeId != null) {
-                    final Task<Integer> sendTask = Wearable.getMessageClient(getBaseContext()).sendMessage(transcriptionNodeId, SET_MESSAGE_PATH, finalMessage);
+        AsyncTask.execute(() -> {
+            if (transcriptionNodeId != null) {
+                final Task<Integer> sendTask = Wearable.getMessageClient(getBaseContext()).sendMessage(transcriptionNodeId, SET_MESSAGE_PATH, message);
 
-                    sendTask.addOnSuccessListener(dataItem -> Log.d("MESSAGESTATE", "SUCCESS"));
-                    sendTask.addOnFailureListener(dataItem -> Log.d("MESSAGESTATE", "FAILURE"));
-                    sendTask.addOnCompleteListener(task -> Log.d("MESSAGESTATE", "COMPLETE"));
-                }
+                sendTask.addOnSuccessListener(dataItem -> Log.d("MESSAGESTATE", "SUCCESS"));
+                sendTask.addOnFailureListener(dataItem -> Log.d("MESSAGESTATE", "FAILURE"));
+                sendTask.addOnCompleteListener(task -> Log.d("MESSAGESTATE", "COMPLETE"));
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mApiClient.disconnect();
     }
 }
